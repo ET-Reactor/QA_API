@@ -1,6 +1,7 @@
 const models = require('../models');
-
+// router.get('/qa/questions', controllers.getAllQ);
 const getAllQ = (req, res) => {
+  models.getQuestions()
   res.status(200).send("get all questions")
 }
 const getAllA = (req, res) => {
