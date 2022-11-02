@@ -9,10 +9,20 @@ const pool = new Pool({
   host: process.env.PGHOST,
 });
 
-// pool.on('error', (err, client) => {
-//   console.error('Unexpected error on idle client', err)
-//   process.exit(-1)
-// })
 
+pool
+  .query('CREATE TABLE IF NOT EXISTS questions (id SERIAL PRIMARY KEY, question_body TEXT NOT NULL, question_date DATE NOT NULL, asker_name VARCHAR(255) NOT NULL, asker_email VARCHAR(100) NOT NULL, question_helpfulness INT, reported BOOLEAN)')
+  .then(res => console.log(res.rows))
+  .catch(err => console.error('Error executing query', err.stack))
+
+pool
+  .query('CREATE TABLE IF NOT EXISTS answers (id SERIAL PRIMARY KEY, question_id INT REFERENCES questions (id), answer_body TEXT NOT NULL, answer_date DATE NOT NULL, answerer_name VARCHAR(100) NOT NULL, answerer_email VARCHAR(100) NOT NULL, reported BOOLEAN, helpful INT)')
+  .then(res => console.log(res.rows))
+  .catch(err => console.error('Error executing query', err.stack))
+
+pool
+  .query('CREATE TABLE IF NOT EXISTS answers_photos (id SERIAL PRIMARY KEY, answer_id INT REFERENCES answers (id), url TEXT NOT NULL)')
+  .then(res => console.log(res.rows))
+  .catch(err => console.error('Error executing query', err.stack))
 
 module.exports = { pool };
