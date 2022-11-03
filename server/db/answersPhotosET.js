@@ -22,6 +22,7 @@ class CSVCleaner extends Transform {
   }
 
   _transform(chunk, encoding, next) {
+    console.log('trimming key', chunk)
     for (let key in chunk) {
       // trims whitespace
       let trimKey = key.trim();
@@ -29,7 +30,6 @@ class CSVCleaner extends Transform {
       if (key !== trimKey) {
         delete chunk[key];
       }
-      console.log('trimming key')
     }
 
     // filters out all non-number characters
