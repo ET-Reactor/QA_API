@@ -13,8 +13,8 @@ const csvStringifier = createCsvStringifier({
   }]
 });
 
-let readStream = fs.createReadStream("server/data/answers_photos.csv");
-let writeStream = fs.createWriteStream("server/data/cleanAnswersPhotos.csv");
+let readStream = fs.createReadStream("server/data/test.csv");
+let writeStream = fs.createWriteStream("server/data/cleanTest.csv");
 
 class CSVCleaner extends Transform {
   constructor(options) {
@@ -22,7 +22,6 @@ class CSVCleaner extends Transform {
   }
 
   _transform(chunk, encoding, next) {
-    console.log('trimming key', chunk)
     for (let key in chunk) {
       // trims whitespace
       let trimKey = key.trim();
@@ -31,7 +30,6 @@ class CSVCleaner extends Transform {
         delete chunk[key];
       }
     }
-
     // filters out all non-number characters
     let onlyIdNumbers = chunk.id.replace(/\D/g, '');
     let onlyAnswerIdNumbers = chunk.answer_id.replace(/\D/g, '');
@@ -40,7 +38,24 @@ class CSVCleaner extends Transform {
 
     // use our csvStringifier to turn our chunk into a csv string
     chunk = csvStringifier.stringifyRecords([chunk]);
-    this.push(chunk);
+
+    let commaCount = 0;
+    let quoteInsertIndex;
+
+    for (let i = 0; i < chunk.length; i++) {
+      if (chunk[i] === ',') {
+        commaCount++
+        if (commaCount === 2) {
+          quoteInsertIndex = i + 1;
+        }
+      }
+    }
+
+
+    let text = chunk.slice(0, quoteInsertIndex) + '"' + chunk.slice(quoteInsertIndex).trim();
+    let result = text.concat(`"\n`);
+
+    this.push(result);
 
     next();
   }
