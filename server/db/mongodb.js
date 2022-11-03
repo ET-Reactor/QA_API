@@ -1,19 +1,13 @@
 require('dotenv').config();
-const mongoose, { Schema } = require('mongoose');
+const mongoose = require('mongoose');
 
 mongoose.connect(`mongodb://localhost/${process.env.PGDATABASE}`);
 
-const questionsSchema = new Schema({
+const photosSchema = new mongoose.Schema({
   id: { type: Number, unique: true, required: true },
-  question_body: String,
-  question_date: Date,
-  asker_name: String,
-  asker_email: String,
-  question_helpfulness: Number,
-  reported: Boolean,
-  answers: [answersSchema]
+  url: String
 });
-const answersSchema = new Schema({
+const answersSchema = new mongoose.Schema({
   id: { type: Number, unique: true, required: true },
   answer_body: String,
   answer_date: Date,
@@ -23,12 +17,17 @@ const answersSchema = new Schema({
   reported: Boolean,
   photos: [photosSchema]
 });
-const photosSchema = new Schema({
+const questionsSchema = new mongoose.Schema({
   id: { type: Number, unique: true, required: true },
-  url: String
+  question_body: String,
+  question_date: Date,
+  asker_name: String,
+  asker_email: String,
+  question_helpfulness: Number,
+  reported: Boolean,
+  answers: [answersSchema]
 });
 
 const Questions = mongoose.model('Questions', questionsSchema);
 
-module.exports.Product = Product;
-module.exports.Style = Style;
+module.exports.Questions = Questions;
