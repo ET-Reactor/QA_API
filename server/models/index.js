@@ -1,19 +1,16 @@
 const { pool } = require('../db/db.js');
-const db = require('../db/mongodb.js');
 
 module.exports = {
-  getQuestions: async () => {
+  getQuestions: async (productId, callback) => {
     try {
-      // promise - checkout a client
-      // pool.query('SELECT * from test', (err, res) => {
-      //   console.log(err, res.rows)
-      //   pool.end()
-      // })
-      db.Questions.query(db.find())
+      const res = await pool.query(`SELECT * FROM questions WHERE product_id=${productId} LIMIT 5`);
+      callback(null, res.rows);
     } catch (error) {
-      console.log(error);
+      console.log('Error fetching questions', error);
+      callback(error, null);
     }
   },
+
   getProduct: () => {
 
   },
@@ -24,3 +21,11 @@ module.exports = {
 
   }
 };
+// getRelated: async (productID, callback) => {
+//   try {
+//     const res = await pool.query("SELECT * FROM related WHERE current_product_id=?", [productID]);
+//     console.log(res.rows);
+//   } catch (error) {
+//     console.log('getRelated error', error);
+//   }
+// },
