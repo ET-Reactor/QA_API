@@ -13,8 +13,8 @@ const csvStringifier = createCsvStringifier({
   }]
 });
 
-let readStream = fs.createReadStream("server/data/test.csv");
-let writeStream = fs.createWriteStream("server/data/cleanTest.csv");
+let readStream = fs.createReadStream("server/data/answers_photos.csv");
+let writeStream = fs.createWriteStream("server/data/cleanAnswersPhotos.csv");
 
 class CSVCleaner extends Transform {
   constructor(options) {
@@ -50,8 +50,6 @@ class CSVCleaner extends Transform {
         }
       }
     }
-
-
     let text = chunk.slice(0, quoteInsertIndex) + '"' + chunk.slice(quoteInsertIndex).trim();
     let result = text.concat(`"\n`);
 
