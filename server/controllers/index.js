@@ -20,7 +20,7 @@ const getAllA = (req, res) => {
   queries.id = req.params.id;
   queries.page = req.query.page ?? 1;
   queries.count = req.query.count ?? 5;
-  // let questionId = req.params.id;
+
   models.getAnswers(queries, (err, data) => {
     if (err) {
       console.log(err);

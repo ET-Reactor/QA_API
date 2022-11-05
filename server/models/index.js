@@ -68,10 +68,6 @@ module.exports = {
     let questionId = queries.id;
     let { page, count } = queries;
 
-    // ORDER BY product_id
-    // LIMIT ${count}
-    // OFFSET((${page} - 1) * ${count})`
-
     try {
       let completedQueries = false;
       const answers = await pool.query(
