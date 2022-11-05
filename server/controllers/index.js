@@ -39,21 +39,49 @@ const postAnsw = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    // console.log('success', data);
+    console.log(data);
     res.status(201).send({'CREATED': data});
   })
 }
 const helpfulQues = (req, res) => {
-  res.status(200).send('successful helpful ques put')
+  models.putHelpfulQuestion(req.params.id, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(404).end();
+    }
+    console.log(data);
+    res.status(204).end();
+  })
 }
 const reportQues = (req, res) => {
-  res.status(200).send('successful report ques put')
+  models.putReportQuestion(req.params.id, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(404).end();
+    }
+    console.log(data);
+    res.status(204).end();
+  })
 }
 const helpfulAnsw = (req, res) => {
-  res.status(200).send('successful helpful answ put')
+  models.putHelpfulAnswer(req.params.id, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(404).end();
+    }
+    console.log(data);
+    res.status(204).end();
+  })
 }
 const reportAnsw = (req, res) => {
-  res.status(200).send('successful helpful answ put')
+  models.putReportAnswer(req.params.id, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(404).end();
+    }
+    console.log(data);
+    res.status(204).end();
+  })
 }
 
 module.exports.getAllQ = getAllQ;

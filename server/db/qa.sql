@@ -31,14 +31,14 @@ CREATE TABLE IF NOT EXISTS answers_photos(
 );
 
 -- ETL
--- COPY questions(id, product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
---   FROM '/Users/joshgarza/HackReactor/QA_API/server/data/cleanQuestions.csv'
---   DELIMITER ',' NULL AS 'null' CSV HEADER;
+COPY questions(id, product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
+  FROM '/Users/joshgarza/HackReactor/QA_API/server/data/cleanQuestions.csv'
+  DELIMITER ',' NULL AS 'null' CSV HEADER;
 
--- COPY answers(id, question_id, answer_body, answer_date, answerer_name, answerer_email, reported, helpful)
---   FROM '/Users/joshgarza/HackReactor/QA_API/server/data/cleanAnswers.csv'
---   DELIMITER ',' NULL AS 'null' CSV HEADER;
+COPY answers(id, question_id, answer_body, answer_date, answerer_name, answerer_email, reported, helpful)
+  FROM '/Users/joshgarza/HackReactor/QA_API/server/data/cleanAnswers.csv'
+  DELIMITER ',' NULL AS 'null' CSV HEADER;
 
--- COPY answers_photos(id, answer_id, url)
---   FROM '/Users/joshgarza/HackReactor/QA_API/server/data/cleanAnswersPhotos.csv'
---   DELIMITER ',' NULL AS 'null' CSV HEADER;
+COPY answers_photos(id, answer_id, url)
+  FROM '/Users/joshgarza/HackReactor/QA_API/server/data/cleanAnswersPhotos.csv'
+  DELIMITER ',' NULL AS 'null' CSV HEADER;

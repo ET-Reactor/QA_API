@@ -12,6 +12,7 @@ module.exports = {
         delete question.asker_email
         pool.query(`SELECT * FROM answers WHERE question_id=${question.id}`)
           .then(answers => {
+            console.log(answers.rows)
             let answersResponse = {}
             answers.rows.forEach((answer, j) => {
               answersResponse[`${answer.id}`] = answer;
@@ -30,8 +31,8 @@ module.exports = {
                     response.product_id = productId;
                     response.results = questions.rows;
                     callback(null, response)
-                    }
-                  })
+                  }
+                })
             })
           })
       })
@@ -43,7 +44,7 @@ module.exports = {
   getAnswers: async (questionId, callback) => {
     try {
       let completedQueries = false;
-      pool.query(`SELECT * FROM answers WHERE question_id=${questionId}`)
+      pool.query(`SELECT * FROM answers WHERE question_id=${questionId} AND reported=false LIMIT 5`)
         .then(answers => {
           let answersResponse = []
           answers.rows.forEach((answer, i) => {
@@ -102,11 +103,6 @@ module.exports = {
     }
   },
 
-  // Parameter	Type	Description
-  // body	text	Text of question being asked
-  // name	text	Username for question asker
-  // email	text	Email address for question asker
-  // photos	[text]	An array of urls corresponding to images to display
   postAnswer: async (reqBody, questionId, callback) => {
     const { body, name, email, photos } = reqBody;
     try {
@@ -128,7 +124,6 @@ module.exports = {
           )`
       )
         .then(result => {
-          // console.log(result)
           pool.query(
             `SELECT id FROM answers
             ORDER BY id DESC
@@ -137,7 +132,6 @@ module.exports = {
             .then(result => {
               const answerId = result.rows[0].id;
               photos.forEach((photo, i) => {
-                console.log(photo)
                 pool.query(
                   `INSERT INTO answers_photos(
                     answer_id,
@@ -161,16 +155,40 @@ module.exports = {
       callback(error, null)
     }
   },
-  putHelpfulQuestion: () => {
-
+  putHelpfulQuestion: (questionId, callback) => {
+    pool.query(
+      `UPDATE questions
+      SET question_helpfulness=question_helpfulness + 1
+      WHERE id=${questionId}`
+    )
+      .then(result => callback(null, result))
+      .catch(err => callback(err, null))
   },
-  putReportQuestion: () => {
-
+  putReportQuestion: (questionId, callback) => {
+    pool.query(
+      `UPDATE questions
+      SET reported=true
+      WHERE id=${questionId}`
+    )
+      .then(result => callback(null, result))
+      .catch(err => callback(err, null))
   },
-  putHelpfulAnswer: () => {
-
+  putHelpfulAnswer: (answerId, callback) => {
+    pool.query(
+      `UPDATE answers
+      SET helpful=helpful + 1
+      WHERE id=${answerId}`
+    )
+      .then(result => callback(null, result))
+      .catch(err => callback(err, null))
   },
-  putReportAnswer: () => {
-
+  putReportAnswer: (answerId, callback) => {
+    pool.query(
+      `UPDATE answers
+      SET reported=true
+      WHERE id=${answerId}`
+    )
+      .then(result => callback(null, result))
+      .catch(err => callback(err, null))
   }
 };
