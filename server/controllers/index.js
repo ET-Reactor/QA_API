@@ -1,8 +1,12 @@
 const models = require('../models');
 
 const getAllQ = (req, res) => {
-  let productId = req.params.id;
-  models.getQuestions(productId, (err, data) => {
+  const queries = {};
+  queries.id = req.query.id;
+  queries.page = req.query.page ?? 1;
+  queries.count = req.query.count ?? 5;
+
+  models.getQuestions(queries, (err, data) => {
     if (err) {
       console.log(err);
       res.status(404).end();
@@ -12,8 +16,12 @@ const getAllQ = (req, res) => {
 }
 
 const getAllA = (req, res) => {
-  let questionId = req.params.id;
-  models.getAnswers(questionId, (err, data) => {
+  const queries = {};
+  queries.id = req.params.id;
+  queries.page = req.query.page ?? 1;
+  queries.count = req.query.count ?? 5;
+
+  models.getAnswers(queries, (err, data) => {
     if (err) {
       console.log(err);
       res.status(404).end();
