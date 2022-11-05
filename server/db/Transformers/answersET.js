@@ -44,6 +44,8 @@ class CSVCleaner extends Transform {
       valueLengths.push(chunk[trimKey].length)
     }
 
+
+    // Clean this up by combining assigment and replacement; i.e. chunk.id = chunk.id.replace(/\D/g, '')
     // filters out all non-number characters
     let onlyIdNumbers = chunk.id.replace(/\D/g, '');
     let onlyQuestionIdNumbers = chunk.question_id.replace(/\D/g, '');
@@ -60,9 +62,13 @@ class CSVCleaner extends Transform {
 
     chunk = csvStringifier.stringifyRecords([chunk]);
 
+
+    // BUILD A FUNCTION THAT CAN BE ABSTRACTED TO COMMON COMPONENTS
+
     // where should quotes be inserted?
     let quoteInsertIndex = [];
 
+    // We should be able to build a forEach to iteratively create quote indices
     quoteInsertIndex.push(2 + valueLengths[0] + valueLengths[1]);
     quoteInsertIndex.push(2 + valueLengths[0] + valueLengths[1] + valueLengths[2]);
     quoteInsertIndex.push(4 + valueLengths[0] + valueLengths[1] + valueLengths[2] + valueLengths[3]);
@@ -70,18 +76,23 @@ class CSVCleaner extends Transform {
     quoteInsertIndex.push(5 + valueLengths[0] + valueLengths[1] + valueLengths[2] + valueLengths[3] + valueLengths[4]);
     quoteInsertIndex.push(5 + valueLengths[0] + valueLengths[1] + valueLengths[2] + valueLengths[3] + valueLengths[4] + valueLengths[5]);
 
+    // stringify and split to find characters we want to remove
     let stringified = JSON.stringify(chunk);
     let split = stringified.split('');
 
+    // remove unwanted characters
     for (let i = 0; i < split.length; i++) {
       if (split[i] === '\\') {
         split.splice(i, 2)
       }
     }
-    let joined = JSON.parse(split.join(''))
-    // joined is cleaned version of chunk
 
-    let text = joined.slice(0, quoteInsertIndex[0]) + '"' + joined.slice(quoteInsertIndex[0], quoteInsertIndex[1]) + '"' + joined.slice(quoteInsertIndex[1], quoteInsertIndex[2]) + '"' + joined.slice(quoteInsertIndex[2], quoteInsertIndex[3]) + '"' + joined.slice(quoteInsertIndex[3], quoteInsertIndex[4]) + '"' + joined.slice(quoteInsertIndex[4], quoteInsertIndex[5]) + '"' + joined.slice(quoteInsertIndex[5]) + `\n`
+    // joined is cleaned version of chunk
+    let joined = JSON.parse(split.join(''))
+
+    // we should be able to simplify this by looping through quoteInsertIndex and iteratively building up several sections of text that we join after completing the loop
+    let text =
+    joined.slice(0, quoteInsertIndex[0]) + '"' + joined.slice(quoteInsertIndex[0], quoteInsertIndex[1]) + '"' + joined.slice(quoteInsertIndex[1], quoteInsertIndex[2]) + '"' + joined.slice(quoteInsertIndex[2], quoteInsertIndex[3]) + '"' + joined.slice(quoteInsertIndex[3], quoteInsertIndex[4]) + '"' + joined.slice(quoteInsertIndex[4], quoteInsertIndex[5]) + '"' + joined.slice(quoteInsertIndex[5]) + `\n`
 
     this.push(text);
 
