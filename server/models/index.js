@@ -1,87 +1,114 @@
 const { pool } = require('../db/db.js');
 
 module.exports = {
-  getQuestions: async (productId, callback) => {
+  getQuestions: async (queries, callback) => {
+    let productId = queries.id;
+    let { page, count } = queries;
+
     try {
       let completedQueries = false;
 
-      const questions = await pool.query(`SELECT * FROM questions WHERE product_id=${productId} AND reported=false LIMIT 5`);
+      const questions = await pool.query(`
+        SELECT * FROM questions
+        WHERE product_id=${productId}
+        AND reported=false
+        ORDER BY product_id
+        LIMIT ${count}
+        OFFSET((${page} - 1) * ${count})`
+      );
 
-      questions.rows.forEach((question, i) => {
-        delete question.product_id
-        delete question.asker_email
-        pool.query(`SELECT * FROM answers WHERE question_id=${question.id} AND reported=false`)
-          .then(answers => {
-            let answersResponse = {};
+      if (questions.rows.length === 0) {
+        callback(null, {})
+      } else {
+        questions.rows.forEach((question, i) => {
+          delete question.product_id
+          delete question.asker_email
+          pool.query(`SELECT * FROM answers WHERE question_id=${question.id} AND reported=false`)
+            .then(answers => {
+              let answersResponse = {};
 
-            if (answers.rows.length === 0 && i === questions.rows.length - 1 && completedQueries === false) {
-              completedQueries = true;
-              let response = {};
-              response.product_id = productId;
-              response.results = questions.rows;
-              callback(null, response)
-            } else {
-              answers.rows.forEach((answer, j) => {
-                answersResponse[`${answer.id}`] = answer;
-                pool.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
-                  .then(photoInfo => {
-                    answer.photos = photoInfo.rows
-                    question.answers = answersResponse
-                    delete answer.question_id
-                    delete answer.answerer_email
-                    photoInfo.rows.forEach(photo => delete photo.answer_id)
+              if (answers.rows.length === 0 && i === questions.rows.length - 1 && completedQueries === false) {
+                completedQueries = true;
+                let response = {};
+                response.product_id = productId;
+                response.results = questions.rows;
+                callback(null, response)
+              } else {
+                answers.rows.forEach((answer, j) => {
+                  answersResponse[`${answer.id}`] = answer;
+                  pool.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
+                    .then(photoInfo => {
+                      answer.photos = photoInfo.rows
+                      question.answers = answersResponse
+                      delete answer.question_id
+                      delete answer.answerer_email
+                      photoInfo.rows.forEach(photo => delete photo.answer_id)
 
-                    // Checking that we're at the last item to be queried
-                    if (i === questions.rows.length - 1 && j === answers.rows.length - 1 && completedQueries === false) {
-                      completedQueries = true;
-                      let response = {};
-                      response.product_id = productId;
-                      response.results = questions.rows;
-                      callback(null, response)
-                    }
-                  })
-              })
-            }
-          })
-      })
+                      // Checking that we're at the last item to be queried
+                      if (i === questions.rows.length - 1 && j === answers.rows.length - 1 && completedQueries === false) {
+                        completedQueries = true;
+                        let response = {};
+                        response.product_id = productId;
+                        response.results = questions.rows;
+                        callback(null, response)
+                      }
+                    })
+                })
+              }
+            })
+        })
+      }
     } catch (error) {
       console.log('Error fetching questions', error);
       callback(error, null);
     }
   },
-  getAnswers: async (questionId, callback) => {
+  getAnswers: async (queries, callback) => {
+    console.log(queries);
+    let questionId = queries.id;
+    let { page, count } = queries;
+
+    // ORDER BY product_id
+    // LIMIT ${count}
+    // OFFSET((${page} - 1) * ${count})`
+
     try {
       let completedQueries = false;
-      pool.query(`SELECT * FROM answers WHERE question_id=${questionId} AND reported=false LIMIT 5`)
-        .then(answers => {
-          let answersResponse = []
-          console.log(answers.rows.length)
-          if (answers.rows.length === 0) {
-            callback(null, answersResponse)
-          } else {
-            answers.rows.forEach((answer, i) => {
-              answersResponse.push(answer);
+      const answers = await pool.query(
+        `SELECT * FROM answers
+        WHERE question_id=${questionId}
+        AND reported=false
+        ORDER by question_id
+        LIMIT ${count}
+        OFFSET((${page} - 1) * ${count})`
+      )
 
-              pool.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
-                .then(photoInfo => {
-                  answer.photos = photoInfo.rows
-                  delete answer.question_id
-                  delete answer.answerer_email
-                  photoInfo.rows.forEach(photo => delete photo.answer_id)
+      let answersResponse = []
 
-                  if (i >= answers.rows.length - 1 && completedQueries === false) {
-                    completedQueries = true;
-                    let response = {};
-                    response.question = questionId;
-                    response.results = answersResponse;
+      if (answers.rows.length === 0) {
+        callback(null, answersResponse)
+      } else {
+        answers.rows.forEach((answer, i) => {
+          answersResponse.push(answer);
 
-                    callback(null, response)
-                  }
-                })
+          pool.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
+            .then(photoInfo => {
+              answer.photos = photoInfo.rows
+              delete answer.question_id
+              delete answer.answerer_email
+              photoInfo.rows.forEach(photo => delete photo.answer_id)
+
+              if (i >= answers.rows.length - 1 && completedQueries === false) {
+                completedQueries = true;
+                let response = {};
+                response.question = questionId;
+                response.results = answersResponse;
+
+                callback(null, response)
+              }
             })
-
-          }
         })
+      }
     } catch (error) {
       console.log('Error fetching answers', error);
       callback(error, null);

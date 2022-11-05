@@ -3,7 +3,7 @@ const router = require('express').Router();
 
 // QUESTIONS AND ANSWERS REQUESTS ---------------------------------------
 // get all info
-router.get('/qa/questions/:id', controllers.getAllQ);
+router.get('/qa/questions', controllers.getAllQ);
 router.get('/qa/questions/:id/answers', controllers.getAllA);
 // // post new info
 router.post('/qa/questions', controllers.postQues);
