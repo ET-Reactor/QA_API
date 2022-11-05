@@ -1,25 +1,47 @@
 const models = require('../models');
-// router.get('/qa/questions', controllers.getAllQ);
+
 const getAllQ = (req, res) => {
   let productId = req.params.id;
   models.getQuestions(productId, (err, data) => {
     if (err) {
-      console.log(err)
+      console.log(err);
       res.status(404).end();
     }
-    console.log(data)
-    res.status(200).send(data)
+    res.status(200).send(data);
   })
 }
 
 const getAllA = (req, res) => {
-  res.status(200).send('get all answers')
+  let questionId = req.params.id;
+  models.getAnswers(questionId, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(404).end();
+    }
+    res.status(200).send(data)
+  })
 }
+
 const postQues = (req, res) => {
-  res.status(201).send('successful question post')
+  models.postQuestion(req.body, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(404).end();
+    }
+    console.log('success,', data);
+    res.status(201).send({'CREATED': data});
+  })
 }
+
 const postAnsw = (req, res) => {
-  res.status(201).send('successful answer post')
+  models.postAnswer(req.body, req.params.id, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(404).end();
+    }
+    // console.log('success', data);
+    res.status(201).send({'CREATED': data});
+  })
 }
 const helpfulQues = (req, res) => {
   res.status(200).send('successful helpful ques put')
