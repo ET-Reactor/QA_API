@@ -18,6 +18,7 @@ const getAllA = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
+    console.log(data)
     res.status(200).send(data)
   })
 }
