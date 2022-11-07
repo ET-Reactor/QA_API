@@ -26,7 +26,6 @@ const getAllA = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    console.log(data)
     res.status(200).send(data)
   })
 }
@@ -37,7 +36,6 @@ const postQues = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    console.log('success,', data);
     res.status(201).send({'CREATED': data});
   })
 }
@@ -48,7 +46,6 @@ const postAnsw = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    console.log(data);
     res.status(201).send({'CREATED': data});
   })
 }
@@ -58,7 +55,6 @@ const helpfulQues = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    console.log(data);
     res.status(204).end();
   })
 }
@@ -68,7 +64,6 @@ const reportQues = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    console.log(data);
     res.status(204).end();
   })
 }
@@ -78,7 +73,6 @@ const helpfulAnsw = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    console.log(data);
     res.status(204).end();
   })
 }
@@ -88,7 +82,6 @@ const reportAnsw = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
-    console.log(data);
     res.status(204).end();
   })
 }

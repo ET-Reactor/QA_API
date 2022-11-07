@@ -64,7 +64,6 @@ module.exports = {
     }
   },
   getAnswers: async (queries, callback) => {
-    console.log(queries);
     let questionId = queries.id;
     let { page, count } = queries;
 
@@ -134,6 +133,9 @@ module.exports = {
         .then(result => {
           callback(null, req)
         })
+        .catch(error => {
+          console.log('Error inserting into db', error)
+        })
     } catch (error) {
       console.log('Error posting question', error)
       callback(error, null)
@@ -141,7 +143,10 @@ module.exports = {
   },
 
   postAnswer: async (reqBody, questionId, callback) => {
-    const { body, name, email, photos } = reqBody;
+    let { body, name, email, photos } = reqBody;
+    if (typeof photos === 'string') {
+      photos = JSON.parse(photos)
+    }
     try {
       const currDate = Date.now();
       pool.query(
