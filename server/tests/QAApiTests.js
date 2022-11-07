@@ -6,7 +6,7 @@ export const errorRate = new Rate('errors');
 
 export const options = {
   stages: [
-    { duration: '0.5m', target: 5 },
+    { duration: '0.5m', target: 30 },
     // { duration: '1m', target: 5 },
     // { duration: '0.5m', target: 0 },
   ],
