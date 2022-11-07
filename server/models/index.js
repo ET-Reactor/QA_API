@@ -64,7 +64,6 @@ module.exports = {
     }
   },
   getAnswers: async (queries, callback) => {
-    console.log(queries);
     let questionId = queries.id;
     let { page, count } = queries;
 
@@ -134,6 +133,9 @@ module.exports = {
         .then(result => {
           callback(null, req)
         })
+        .catch(error => {
+          console.log('Error inserting into db', error)
+        })
     } catch (error) {
       console.log('Error posting question', error)
       callback(error, null)
@@ -141,7 +143,10 @@ module.exports = {
   },
 
   postAnswer: async (reqBody, questionId, callback) => {
-    const { body, name, email, photos } = reqBody;
+    let { body, name, email, photos } = reqBody;
+    if (typeof photos === 'string') {
+      photos = JSON.parse(photos)
+    }
     try {
       const currDate = Date.now();
       pool.query(
@@ -229,3 +234,24 @@ module.exports = {
       .catch(err => callback(err, null))
   }
 };
+
+
+// INSERT INTO questions(
+//   product_id,
+//   question_body,
+//   question_date,
+//   asker_name,
+//   asker_email
+//   )
+//   VALUES(
+//     1,
+//     'this is a query body',
+//     1595884714409,
+//     'this is a query name',
+//     'this is a query.email'
+//   );
+
+//   "product_id": 1,
+//   "body": "this is a query body",
+//   "name": "this is a query name",
+//   "email": "this is a query.email"
