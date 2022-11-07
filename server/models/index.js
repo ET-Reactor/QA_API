@@ -234,24 +234,3 @@ module.exports = {
       .catch(err => callback(err, null))
   }
 };
-
-
-// INSERT INTO questions(
-//   product_id,
-//   question_body,
-//   question_date,
-//   asker_name,
-//   asker_email
-//   )
-//   VALUES(
-//     1,
-//     'this is a query body',
-//     1595884714409,
-//     'this is a query name',
-//     'this is a query.email'
-//   );
-
-//   "product_id": 1,
-//   "body": "this is a query body",
-//   "name": "this is a query name",
-//   "email": "this is a query.email"
