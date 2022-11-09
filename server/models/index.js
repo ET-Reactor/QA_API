@@ -2,13 +2,11 @@ const { pool } = require('../db/db.js');
 
 module.exports = {
   getQuestions: async (queries, callback) => {
-    console.log('in model')
     const client = await pool.connect();
     let productId = queries.id;
     let { page, count } = queries;
 
     try {
-      console.log('pool connected')
       let completedQueries = false;
 
       const questions = await client.query(`
@@ -19,7 +17,6 @@ module.exports = {
         LIMIT ${count}
         OFFSET((${page} - 1) * ${count})`
       );
-      console.log('after first query')
       if (questions.rows.length === 0) {
         callback(null, {})
       } else {
