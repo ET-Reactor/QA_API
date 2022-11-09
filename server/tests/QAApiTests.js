@@ -24,7 +24,7 @@ export const answersPutReportError = new Rate('/PUT answers report errors');
 export const answersPutReportTrend = new Trend('/PUT answers report API uptime');
 
 export const last10PID = randomIntBetween(900011, 1000011);
-const vus = 519;
+const vus = 1;
 
 export const options = {
   discardResponseBodies: true,
@@ -182,6 +182,7 @@ export function answersPutReport() {
 export function handleSummary(data) {
   return {
     "results.html": htmlReport(data),
+    stdout: textSummary(data, { indent: " ", enableColors: true }),
   };
 }
 
