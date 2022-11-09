@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', router)
 
-const PORT = process.env.PGPORT || 3000;
+const PORT = 3000;
 
 app.listen(PORT);
 console.log(`server listening at http://localhost:${PORT}`)
