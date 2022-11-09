@@ -2,13 +2,14 @@ const { pool } = require('../db/db.js');
 
 module.exports = {
   getQuestions: async (queries, callback) => {
+    const client = await pool.connect();
     let productId = queries.id;
     let { page, count } = queries;
 
     try {
       let completedQueries = false;
 
-      const questions = await pool.query(`
+      const questions = await client.query(`
         SELECT * FROM questions
         WHERE product_id=${productId}
         AND reported=false
@@ -23,7 +24,7 @@ module.exports = {
         questions.rows.forEach((question, i) => {
           delete question.product_id
           delete question.asker_email
-          pool.query(`SELECT * FROM answers WHERE question_id=${question.id} AND reported=false`)
+          client.query(`SELECT * FROM answers WHERE question_id=${question.id} AND reported=false`)
             .then(answers => {
               let answersResponse = {};
 
@@ -36,7 +37,7 @@ module.exports = {
               } else {
                 answers.rows.forEach((answer, j) => {
                   answersResponse[`${answer.id}`] = answer;
-                  pool.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
+                  client.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
                     .then(photoInfo => {
                       answer.photos = photoInfo.rows
                       question.answers = answersResponse
@@ -61,15 +62,18 @@ module.exports = {
     } catch (error) {
       console.log('Error fetching questions', error);
       callback(error, null);
+    } finally {
+      client.release();
     }
   },
   getAnswers: async (queries, callback) => {
+    const client = await pool.connect();
     let questionId = queries.id;
     let { page, count } = queries;
 
     try {
       let completedQueries = false;
-      const answers = await pool.query(
+      const answers = await client.query(
         `SELECT * FROM answers
         WHERE question_id=${questionId}
         AND reported=false
@@ -86,7 +90,7 @@ module.exports = {
         answers.rows.forEach((answer, i) => {
           answersResponse.push(answer);
 
-          pool.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
+          client.query(`SELECT * FROM answers_photos WHERE answer_id=${answer.id}`)
             .then(photoInfo => {
               answer.photos = photoInfo.rows
               delete answer.question_id
@@ -107,14 +111,17 @@ module.exports = {
     } catch (error) {
       console.log('Error fetching answers', error);
       callback(error, null);
+    } finally {
+      client.release();
     }
   },
 
   postQuestion: async (req, callback) => {
+    const client = await pool.connect();
     const { product_id, body, name, email } = req;
     try {
       const currDate = Date.now();
-      pool.query(
+      client.query(
         `INSERT INTO questions(
           product_id,
           question_body,
@@ -139,17 +146,20 @@ module.exports = {
     } catch (error) {
       console.log('Error posting question', error)
       callback(error, null)
+    } finally {
+      client.release();
     }
   },
 
   postAnswer: async (reqBody, questionId, callback) => {
+    const client = await pool.connect();
     let { body, name, email, photos } = reqBody;
     if (typeof photos === 'string') {
       photos = JSON.parse(photos)
     }
     try {
       const currDate = Date.now();
-      pool.query(
+      client.query(
         `INSERT INTO answers(
           question_id,
           answer_body,
@@ -166,7 +176,7 @@ module.exports = {
           )`
       )
         .then(result => {
-          pool.query(
+          client.query(
             `SELECT id FROM answers
             ORDER BY id DESC
             LIMIT 1`
@@ -174,7 +184,7 @@ module.exports = {
             .then(result => {
               const answerId = result.rows[0].id;
               photos.forEach((photo, i) => {
-                pool.query(
+                client.query(
                   `INSERT INTO answers_photos(
                     answer_id,
                     url
@@ -195,42 +205,76 @@ module.exports = {
     } catch (error) {
       console.log('Error posting question', error)
       callback(error, null)
+    } finally {
+      client.release();
     }
   },
-  putHelpfulQuestion: (questionId, callback) => {
-    pool.query(
-      `UPDATE questions
-      SET question_helpfulness=question_helpfulness + 1
-      WHERE id=${questionId}`
-    )
-      .then(result => callback(null, result))
-      .catch(err => callback(err, null))
+  putHelpfulQuestion: async (questionId, callback) => {
+    const client = await pool.connect();
+    try {
+      client.query(
+        `UPDATE questions
+        SET question_helpfulness=question_helpfulness + 1
+        WHERE id=${questionId}`
+      )
+        .then(result => callback(null, result))
+        .catch(err => callback(err, null))
+    } catch (error) {
+      console.log('Error in put request', error)
+      callback(error, null)
+    } finally {
+      client.release();
+    }
   },
-  putReportQuestion: (questionId, callback) => {
-    pool.query(
-      `UPDATE questions
-      SET reported=true
-      WHERE id=${questionId}`
-    )
-      .then(result => callback(null, result))
-      .catch(err => callback(err, null))
+  putReportQuestion: async (questionId, callback) => {
+    const client = await pool.connect();
+    try {
+      client.query(
+        `UPDATE questions
+        SET reported=true
+        WHERE id=${questionId}`
+      )
+        .then(result => callback(null, result))
+        .catch(err => callback(err, null))
+    } catch (error) {
+      console.log('Error in put request', error)
+      callback(error, null)
+    } finally {
+      client.release();
+    }
   },
-  putHelpfulAnswer: (answerId, callback) => {
-    pool.query(
-      `UPDATE answers
-      SET helpful=helpful + 1
-      WHERE id=${answerId}`
-    )
-      .then(result => callback(null, result))
-      .catch(err => callback(err, null))
+  putHelpfulAnswer: async (answerId, callback) => {
+    const client = await pool.connect();
+    try {
+      client.query(
+        `UPDATE answers
+        SET helpful=helpful + 1
+        WHERE id=${answerId}`
+      )
+        .then(result => callback(null, result))
+        .catch(err => callback(err, null))
+    } catch (error) {
+      console.log('Error in put request', error)
+      callback(error, null)
+    } finally {
+      client.release();
+    }
   },
-  putReportAnswer: (answerId, callback) => {
-    pool.query(
-      `UPDATE answers
-      SET reported=true
-      WHERE id=${answerId}`
-    )
-      .then(result => callback(null, result))
-      .catch(err => callback(err, null))
+  putReportAnswer: async (answerId, callback) => {
+    const client = await pool.connect();
+    try {
+      client.query(
+        `UPDATE answers
+        SET reported=true
+        WHERE id=${answerId}`
+      )
+        .then(result => callback(null, result))
+        .catch(err => callback(err, null))
+    } catch (error) {
+      console.log('Error in put request', error)
+      callback(error, null)
+    } finally {
+      client.release();
+    }
   }
 };

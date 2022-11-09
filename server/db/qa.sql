@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS answers_photos(
   url VARCHAR(2048) NOT NULL
 );
 
+CREATE index product_id_idx on questions(product_id);
+CREATE index question_id_idx on answers(question_id);
+CREATE index answer_id_idx on answers_photos(answer_id);
+
 -- ETL
 COPY questions(id, product_id, question_body, question_date, asker_name, asker_email, reported, question_helpfulness)
   FROM '/Users/joshgarza/HackReactor/QA_API/server/data/cleanQuestions.csv'

@@ -24,7 +24,7 @@ export const answersPutReportError = new Rate('/PUT answers report errors');
 export const answersPutReportTrend = new Trend('/PUT answers report API uptime');
 
 export const last10PID = randomIntBetween(900011, 1000011);
-const vus = 2;
+const vus = 519;
 
 export const options = {
   discardResponseBodies: true,
@@ -116,7 +116,6 @@ export function questions() {
   check(questionsResponse, {
     'Questions response status is 200': (res) => res.status === 200,
   }) || questionsError.add(1);
-  sleep(1);
 }
 export function answers() {
   const answersResponse = http.get(`http://localhost:3000/api/qa/questions/${query.id}/answers?page=${query.page}&count=${query.count}`, { tags: { name: 'answersURL' } });
@@ -124,7 +123,6 @@ export function answers() {
   check(answersResponse, {
     'answers response status is 200': (res) => res.status === 200,
   }) || answersError.add(1);
-  sleep(1);
 }
 export function questionsPost() {
   const body = {
@@ -138,7 +136,6 @@ export function questionsPost() {
   check(questionsPostResponse, {
     'Questions POST response status is 201': (res) => res.status === 201,
   }) || questionsPostError.add(1);
-  sleep(1);
 }
 export function answersPost() {
   const body = {
@@ -152,7 +149,6 @@ const answersPostResponse = http.post(`http://localhost:3000/api/qa/questions/${
   check(answersPostResponse, {
     'answers POST response status is 201': (res) => res.status === 201,
   }) || answersPostError.add(1);
-  sleep(1);
 }
 export function questionsPutHelp() {
   const questionsPutHelpResponse = http.put(`http://localhost:3000/api/qa/questions/${query.id}/helpful`, { tags: { name: 'questionsPutHelpURL' } });
@@ -160,7 +156,6 @@ export function questionsPutHelp() {
   check(questionsPutHelpResponse, {
     'QuestionsPutHelp response status is 204': (res) => res.status === 204,
   }) || questionsPutHelpError.add(1);
-  sleep(1);
 }
 export function questionsPutReport() {
   const questionsPutReportResponse = http.put(`http://localhost:3000/api/qa/questions/${query.id}/report`, { tags: { name: 'questionsPutReportURL' } });
@@ -168,7 +163,6 @@ export function questionsPutReport() {
   check(questionsPutReportResponse, {
     'QuestionsPutReport response status is 204': (res) => res.status === 204,
   }) || questionsPutReportError.add(1);
-  sleep(1);
 }
 export function answersPutHelp() {
   const answersPutHelpResponse = http.put(`http://localhost:3000/api/qa/answers/${query.id}/helpful`, { tags: { name: 'answersPutHelpURL' } });
@@ -176,7 +170,6 @@ export function answersPutHelp() {
   check(answersPutHelpResponse, {
     'answersPutHelp response status is 204': (res) => res.status === 204,
   }) || answersPutHelpError.add(1);
-  sleep(1);
 }
 export function answersPutReport() {
   const answersPutReportResponse = http.put(`http://localhost:3000/api/qa/answers/${query.id}/report`, { tags: { name: 'answersPutReportURL' } });
@@ -184,7 +177,6 @@ export function answersPutReport() {
   check(answersPutReportResponse, {
     'answersPutReport response status is 204': (res) => res.status === 204,
   }) || answersPutReportError.add(1);
-  sleep(1);
 }
 
 export function handleSummary(data) {
