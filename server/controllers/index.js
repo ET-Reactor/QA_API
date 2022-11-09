@@ -1,6 +1,7 @@
 const models = require('../models');
 
 const getAllQ = (req, res) => {
+  console.log('request received')
   const queries = {};
   queries.id = req.query.id;
   queries.page = req.query.page ?? 1;
@@ -11,6 +12,7 @@ const getAllQ = (req, res) => {
       console.log(err);
       res.status(404).end();
     }
+    console.log(data)
     res.status(200).send(data);
   })
 }
