@@ -35,56 +35,56 @@ export const options = {
   // ],
   scenarios: {
     questions: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'questions',
       vus: vus,
       duration: '1m',
       tags: { name: 'questionsURL' },
     },
     answers: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'answers',
       vus: vus,
       duration: '1m',
       tags: { name: 'answersURL' },
     },
     questionsPost: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'questionsPost',
       vus: vus,
       duration: '1m',
       tags: { name: 'questionsPostURL' },
     },
     answersPost: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'answersPost',
       vus: vus,
       duration: '1m',
       tags: { name: 'answersPostURL' },
     },
     questionsPutHelp: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'questionsPutHelp',
       vus: vus,
       duration: '1m',
       tags: { name: 'questionsPutHelpURL' },
     },
     questionsPutReport: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'questionsPutReport',
       vus: vus,
       duration: '1m',
       tags: { name: 'questionsPutReportURL' },
     },
     answersPutHelp: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'answersPutHelp',
       vus: vus,
       duration: '1m',
       tags: { name: 'answersPutHelpURL' },
     },
     answersPutReport: {
-      executor: 'constant-vus',
+      executor: 'constant-arrival-rate',
       exec: 'answersPutReport',
       vus: vus,
       duration: '1m',
@@ -93,7 +93,7 @@ export const options = {
   },
   thresholds: {
     http_req_failed: ['rate<0.01'],
-    http_req_duration: ['p(90)<2000'],
+    http_req_duration: ['p(95)<2000'],
   },
 };
 
