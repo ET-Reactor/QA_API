@@ -24,9 +24,7 @@ export const answersPutReportError = new Rate('/PUT answers report errors');
 export const answersPutReportTrend = new Trend('/PUT answers report API uptime');
 
 export const last10PID = randomIntBetween(900011, 1000011);
-const vus = 100;
-const getReqs = 1000;
-const otherReqs = 100;
+const vus = 519;
 
 export const options = {
   discardResponseBodies: true,
@@ -37,83 +35,59 @@ export const options = {
   // ],
   scenarios: {
     questions: {
-      executor: 'constant-arrival-rate',
-      duration: '1m',
-      rate: getReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
+      executor: 'constant-vus',
       exec: 'questions',
+      vus: vus,
+      duration: '1m',
       tags: { name: 'questionsURL' },
     },
     answers: {
-      executor: 'constant-arrival-rate',
+      executor: 'constant-vus',
       exec: 'answers',
+      vus: vus,
       duration: '1m',
-      rate: getReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
       tags: { name: 'answersURL' },
     },
     questionsPost: {
-      executor: 'constant-arrival-rate',
+      executor: 'constant-vus',
       exec: 'questionsPost',
+      vus: vus,
       duration: '1m',
-      rate: otherReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
       tags: { name: 'questionsPostURL' },
     },
     answersPost: {
-      executor: 'constant-arrival-rate',
+      executor: 'constant-vus',
       exec: 'answersPost',
+      vus: vus,
       duration: '1m',
-      rate: otherReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
       tags: { name: 'answersPostURL' },
     },
     questionsPutHelp: {
-      executor: 'constant-arrival-rate',
+      executor: 'constant-vus',
       exec: 'questionsPutHelp',
+      vus: vus,
       duration: '1m',
-      rate: otherReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
       tags: { name: 'questionsPutHelpURL' },
     },
     questionsPutReport: {
-      executor: 'constant-arrival-rate',
+      executor: 'constant-vus',
       exec: 'questionsPutReport',
+      vus: vus,
       duration: '1m',
-      rate: otherReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
       tags: { name: 'questionsPutReportURL' },
     },
     answersPutHelp: {
-      executor: 'constant-arrival-rate',
+      executor: 'constant-vus',
       exec: 'answersPutHelp',
+      vus: vus,
       duration: '1m',
-      rate: otherReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
       tags: { name: 'answersPutHelpURL' },
     },
     answersPutReport: {
-      executor: 'constant-arrival-rate',
+      executor: 'constant-vus',
       exec: 'answersPutReport',
+      vus: vus,
       duration: '1m',
-      rate: otherReqs,
-      timeUnit: '1s',
-      preAllocatedVUs: vus,
-      maxVUs: vus,
       tags: { name: 'answersPutReportURL' },
     },
   },
@@ -208,7 +182,7 @@ export function answersPutReport() {
 export function handleSummary(data) {
   return {
     "results.html": htmlReport(data),
-    // stdout: textSummary(data, { indent: " ", enableColors: true }),
+    stdout: textSummary(data, { indent: " ", enableColors: true }),
   };
 }
 
